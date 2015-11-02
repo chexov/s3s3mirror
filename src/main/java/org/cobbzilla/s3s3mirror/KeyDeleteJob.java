@@ -2,10 +2,7 @@ package org.cobbzilla.s3s3mirror;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
 
-@Slf4j
 public class KeyDeleteJob extends KeyJob {
 
     private String keysrc;
@@ -21,8 +18,6 @@ public class KeyDeleteJob extends KeyJob {
         }
     }
 
-    @Override public Logger getLog() { return log; }
-
     @Override
     public void run() {
         final MirrorOptions options = context.getOptions();
@@ -36,28 +31,30 @@ public class KeyDeleteJob extends KeyJob {
             final DeleteObjectRequest request = new DeleteObjectRequest(options.getDestinationBucket(), key);
 
             if (options.isDryRun()) {
-                log.info("Would have deleted "+key+" from destination because "+keysrc+" does not exist in source");
+                System.out.println("Would have deleted "+key+" from destination because "+keysrc+" does not exist in source");
             } else {
                 boolean deletedOK = false;
                 for (int tries=0; tries<maxRetries; tries++) {
-                    if (verbose) log.info("deleting (try #"+tries+"): "+key);
+                    if (verbose) System.out.println("deleting (try #"+tries+"): "+key);
                     try {
                         stats.s3deleteCount.incrementAndGet();
                         client.deleteObject(request);
                         deletedOK = true;
-                        if (verbose) log.info("successfully deleted (on try #"+tries+"): "+key);
+                        if (verbose) System.out.println("successfully deleted (on try #"+tries+"): "+key);
                         break;
 
                     } catch (AmazonS3Exception s3e) {
-                        log.error("s3 exception deleting (try #"+tries+") "+key+": "+s3e);
+                        s3e.printStackTrace();
+                        System.err.println("s3 exception deleting (try #"+tries+") "+key+": "+s3e);
 
                     } catch (Exception e) {
-                        log.error("unexpected exception deleting (try #"+tries+") "+key+": "+e);
+                        e.printStackTrace();
+                        System.err.println("unexpected exception deleting (try #"+tries+") "+key+": ");
                     }
                     try {
                         Thread.sleep(10);
                     } catch (InterruptedException e) {
-                        log.error("interrupted while waiting to retry key: "+key);
+                        System.err.println("interrupted while waiting to retry key: "+key);
                         break;
                     }
                 }
@@ -69,13 +66,13 @@ public class KeyDeleteJob extends KeyJob {
             }
 
         } catch (Exception e) {
-            log.error("error deleting key: "+key+": "+e);
+            System.err.println("error deleting key: "+key+": "+e);
 
         } finally {
             synchronized (notifyLock) {
                 notifyLock.notifyAll();
             }
-            if (verbose) log.info("done with "+key);
+            if (verbose) System.out.println("done with "+key);
         }
     }
 
@@ -91,14 +88,14 @@ public class KeyDeleteJob extends KeyJob {
 
         } catch (AmazonS3Exception e) {
             if (e.getStatusCode() == 404) {
-                if (verbose) log.info("Key not found in source bucket (will delete from destination): "+ keysrc);
+                if (verbose) System.out.println("Key not found in source bucket (will delete from destination): "+ keysrc);
                 return true;
             } else {
-                log.warn("Error getting metadata for " + options.getSourceBucket() + "/" + keysrc + " (not deleting): " + e);
+                System.out.println("Error getting metadata for " + options.getSourceBucket() + "/" + keysrc + " (not deleting): " + e);
                 return false;
             }
         } catch (Exception e) {
-            log.warn("Error getting metadata for " + options.getSourceBucket() + "/" + keysrc + " (not deleting): " + e);
+            System.out.println("Error getting metadata for " + options.getSourceBucket() + "/" + keysrc + " (not deleting): " + e);
             return false;
         }
     }

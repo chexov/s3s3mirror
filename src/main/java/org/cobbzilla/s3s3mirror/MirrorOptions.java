@@ -2,8 +2,6 @@ package org.cobbzilla.s3s3mirror;
 
 import com.amazonaws.auth.AWSCredentials;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.joda.time.DateTime;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
@@ -18,8 +16,8 @@ public class MirrorOptions implements AWSCredentials {
 
     public static final String AWS_ACCESS_KEY = "AWS_ACCESS_KEY_ID";
     public static final String AWS_SECRET_KEY = "AWS_SECRET_ACCESS_KEY";
-    @Getter @Setter private String aWSAccessKeyId = System.getenv().get(AWS_ACCESS_KEY);
-    @Getter @Setter private String aWSSecretKey = System.getenv().get(AWS_SECRET_KEY);
+    private String aWSAccessKeyId = System.getenv().get(AWS_ACCESS_KEY);
+    private String aWSSecretKey = System.getenv().get(AWS_SECRET_KEY);
 
     public boolean hasAwsKeys() { return aWSAccessKeyId != null && aWSSecretKey != null; }
 
@@ -27,49 +25,49 @@ public class MirrorOptions implements AWSCredentials {
     public static final String OPT_USE_IAM_ROLE = "-i";
     public static final String LONGOPT_USE_IAM_ROLE = "--iam";
     @Option(name=OPT_USE_IAM_ROLE, aliases=LONGOPT_USE_IAM_ROLE, usage=USAGE_USE_IAM_ROLE)
-    @Getter @Setter private boolean useIamRole = false;
+    private boolean useIamRole = false;
 
     public static final String USAGE_PROFILE= "Use a specific profile from your credential file (~/.aws/config)";
     public static final String OPT_PROFILE= "-P";
     public static final String LONGOPT_PROFILE = "--profile";
     @Option(name=OPT_PROFILE, aliases=LONGOPT_PROFILE, usage=USAGE_PROFILE)
-    @Getter @Setter private String profile = null;
+    private String profile = null;
 
     public static final String USAGE_DRY_RUN = "Do not actually do anything, but show what would be done";
     public static final String OPT_DRY_RUN = "-n";
     public static final String LONGOPT_DRY_RUN = "--dry-run";
     @Option(name=OPT_DRY_RUN, aliases=LONGOPT_DRY_RUN, usage=USAGE_DRY_RUN)
-    @Getter @Setter private boolean dryRun = false;
+    private boolean dryRun = false;
 
     public static final String USAGE_VERBOSE = "Verbose output";
     public static final String OPT_VERBOSE = "-v";
     public static final String LONGOPT_VERBOSE = "--verbose";
     @Option(name=OPT_VERBOSE, aliases=LONGOPT_VERBOSE, usage=USAGE_VERBOSE)
-    @Getter @Setter private boolean verbose = false;
+    private boolean verbose = false;
     
     public static final String USAGE_SSL = "Use SSL for all S3 api operations";
     public static final String OPT_SSL = "-s";
     public static final String LONGOPT_SSL = "--ssl";
     @Option(name=OPT_SSL, aliases=LONGOPT_SSL, usage=USAGE_SSL)
-    @Getter @Setter private boolean ssl = false;
+    private boolean ssl = false;
     
     public static final String USAGE_ENCRYPT = "Enable AWS managed server-side encryption";
     public static final String OPT_ENCRYPT = "-E";
     public static final String LONGOPT_ENCRYPT = "--server-side-encryption";
     @Option(name=OPT_ENCRYPT, aliases=LONGOPT_ENCRYPT, usage=USAGE_ENCRYPT)
-    @Getter @Setter private boolean encrypt = false;
+    private boolean encrypt = false;
     
     public static final String USAGE_STORAGE_CLASS = "Specify the S3 StorageClass (Standard | ReducedRedundancy)";
     public static final String OPT_STORAGE_CLASS = "-l";
     public static final String LONGOPT_STORAGE_CLASS = "--storage-class";
     @Option(name=OPT_STORAGE_CLASS, aliases=LONGOPT_STORAGE_CLASS, usage=USAGE_STORAGE_CLASS)
-    @Getter @Setter private String storageClass = "Standard"; 
+    private String storageClass = "Standard"; 
 
     public static final String USAGE_PREFIX = "Only copy objects whose keys start with this prefix";
     public static final String OPT_PREFIX = "-p";
     public static final String LONGOPT_PREFIX = "--prefix";
     @Option(name=OPT_PREFIX, aliases=LONGOPT_PREFIX, usage=USAGE_PREFIX)
-    @Getter @Setter private String prefix = null;
+    private String prefix = null;
 
     public boolean hasPrefix () { return prefix != null && prefix.length() > 0; }
     public int getPrefixLength () { return prefix == null ? 0 : prefix.length(); }
@@ -78,7 +76,7 @@ public class MirrorOptions implements AWSCredentials {
     public static final String OPT_DEST_PREFIX= "-d";
     public static final String LONGOPT_DEST_PREFIX = "--dest-prefix";
     @Option(name=OPT_DEST_PREFIX, aliases=LONGOPT_DEST_PREFIX, usage=USAGE_DEST_PREFIX)
-    @Getter @Setter private String destPrefix = null;
+    private String destPrefix = null;
 
     public boolean hasDestPrefix() { return destPrefix != null && destPrefix.length() > 0; }
     public int getDestPrefixLength () { return destPrefix == null ? 0 : destPrefix.length(); }
@@ -89,7 +87,7 @@ public class MirrorOptions implements AWSCredentials {
     public static final String OPT_ENDPOINT = "-e";
     public static final String LONGOPT_ENDPOINT = "--endpoint";
     @Option(name=OPT_ENDPOINT, aliases=LONGOPT_ENDPOINT, usage=USAGE_ENDPOINT)
-    @Getter @Setter private String endpoint = System.getenv().get(AWS_ENDPOINT);
+    private String endpoint = System.getenv().get(AWS_ENDPOINT);
 
     public boolean hasEndpoint () { return endpoint != null && endpoint.trim().length() > 0; }
 
@@ -97,32 +95,32 @@ public class MirrorOptions implements AWSCredentials {
     public static final String OPT_MAX_CONNECTIONS = "-m";
     public static final String LONGOPT_MAX_CONNECTIONS = "--max-connections";
     @Option(name=OPT_MAX_CONNECTIONS, aliases=LONGOPT_MAX_CONNECTIONS, usage=USAGE_MAX_CONNECTIONS)
-    @Getter @Setter private int maxConnections = 100;
+    private int maxConnections = 100;
 
     public static final String USAGE_MAX_THREADS = "Maximum number of threads (default 100)";
     public static final String OPT_MAX_THREADS = "-t";
     public static final String LONGOPT_MAX_THREADS = "--max-threads";
     @Option(name=OPT_MAX_THREADS, aliases=LONGOPT_MAX_THREADS, usage=USAGE_MAX_THREADS)
-    @Getter @Setter private int maxThreads = 100;
+    private int maxThreads = 100;
 
     public static final String USAGE_MAX_RETRIES = "Maximum number of retries for S3 requests (default 5)";
     public static final String OPT_MAX_RETRIES = "-r";
     public static final String LONGOPT_MAX_RETRIES = "--max-retries";
     @Option(name=OPT_MAX_RETRIES, aliases=LONGOPT_MAX_RETRIES, usage=USAGE_MAX_RETRIES)
-    @Getter @Setter private int maxRetries = 5;
+    private int maxRetries = 5;
     
     public static final String USAGE_SIZE_ONLY = "Only use object size when checking for equality and ignore etags";
     public static final String OPT_SIZE_ONLY = "-S";
     public static final String LONGOPT_SIZE_ONLY = "--size-only";
     @Option(name=OPT_SIZE_ONLY, aliases=LONGOPT_SIZE_ONLY, usage=USAGE_SIZE_ONLY)
-    @Getter @Setter private boolean sizeOnly = false;
+    private boolean sizeOnly = false;
 
     public static final String USAGE_CTIME = "Only copy objects whose Last-Modified date is younger than this many days. " +
             "For other time units, use these suffixes: y (years), M (months), d (days), w (weeks), h (hours), m (minutes), s (seconds)";
     public static final String OPT_CTIME = "-c";
     public static final String LONGOPT_CTIME = "--ctime";
     @Option(name=OPT_CTIME, aliases=LONGOPT_CTIME, usage=USAGE_CTIME)
-    @Getter @Setter private String ctime = null;
+    private String ctime = null;
     public boolean hasCtime() { return ctime != null; }
 
     private static final String PROXY_USAGE = "host:port of proxy server to use. " +
@@ -147,8 +145,8 @@ public class MirrorOptions implements AWSCredentials {
             throw new IllegalArgumentException("Invalid proxy setting ("+proxy+"), port could not be parsed as a number");
         }
     }
-    @Getter @Setter public String proxyHost = null;
-    @Getter @Setter public int proxyPort = -1;
+    public String proxyHost = null;
+    public int proxyPort = -1;
 
     public boolean getHasProxy() {
         boolean hasProxyHost = proxyHost != null && proxyHost.trim().length() > 0;
@@ -181,21 +179,21 @@ public class MirrorOptions implements AWSCredentials {
         return Integer.parseInt(ctime.substring(0, ctime.length() - 1));
     }
 
-    @Getter private long nowTime = System.currentTimeMillis();
-    @Getter private long maxAge;
-    @Getter private String maxAgeDate;
+    private long nowTime = System.currentTimeMillis();
+    private long maxAge;
+    private String maxAgeDate;
 
     public static final String USAGE_DELETE_REMOVED = "Delete objects from the destination bucket if they do not exist in the source bucket";
     public static final String OPT_DELETE_REMOVED = "-X";
     public static final String LONGOPT_DELETE_REMOVED = "--delete-removed";
     @Option(name=OPT_DELETE_REMOVED, aliases=LONGOPT_DELETE_REMOVED, usage=USAGE_DELETE_REMOVED)
-    @Getter @Setter private boolean deleteRemoved = false;
+    private boolean deleteRemoved = false;
 
-    @Argument(index=0, required=true, usage="source bucket[/source/prefix]") @Getter @Setter private String source;
-    @Argument(index=1, required=true, usage="destination bucket[/dest/prefix]") @Getter @Setter private String destination;
+    @Argument(index=0, required=true, usage="source bucket[/source/prefix]") private String source;
+    @Argument(index=1, required=true, usage="destination bucket[/dest/prefix]") private String destination;
 
-    @Getter private String sourceBucket;
-    @Getter private String destinationBucket;
+    private String sourceBucket;
+    private String destinationBucket;
 
     /**
      * Current max file size allowed in amazon is 5 GB. We can try and provide this as an option too.
@@ -208,7 +206,7 @@ public class MirrorOptions implements AWSCredentials {
     private static final String OPT_MULTI_PART_UPLOAD_SIZE = "-u";
     private static final String LONGOPT_MULTI_PART_UPLOAD_SIZE = "--upload-part-size";
     @Option(name=OPT_MULTI_PART_UPLOAD_SIZE, aliases=LONGOPT_MULTI_PART_UPLOAD_SIZE, usage=MULTI_PART_UPLOAD_SIZE_USAGE)
-    @Getter @Setter private long uploadPartSize = DEFAULT_PART_SIZE;
+    private long uploadPartSize = DEFAULT_PART_SIZE;
 
     private static final String CROSS_ACCOUNT_USAGE ="Copy across AWS accounts. Only Resource-based policies are supported (as " +
             "specified by AWS documentation) for cross account copying. " +
@@ -217,7 +215,7 @@ public class MirrorOptions implements AWSCredentials {
     private static final String OPT_CROSS_ACCOUNT_COPY = "-C";
     private static final String LONGOPT_CROSS_ACCOUNT_COPY = "--cross-account-copy";
     @Option(name=OPT_CROSS_ACCOUNT_COPY, aliases=LONGOPT_CROSS_ACCOUNT_COPY, usage=CROSS_ACCOUNT_USAGE)
-    @Getter @Setter private boolean crossAccountCopy = false;
+    private boolean crossAccountCopy = false;
 
     public void initDerivedFields() {
 
@@ -258,4 +256,133 @@ public class MirrorOptions implements AWSCredentials {
         return bucket;
     }
 
+    @Override
+    public String getAWSAccessKeyId() {
+        return aWSAccessKeyId;
+    }
+
+    @Override
+    public String getAWSSecretKey() {
+        return aWSSecretKey;
+    }
+
+    public boolean isSsl() {
+        return ssl;
+    }
+
+    public int getMaxConnections() {
+        return maxConnections;
+    }
+
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    public int getProxyPort() {
+        return proxyPort;
+    }
+
+    public boolean isUseIamRole() {
+        return useIamRole;
+    }
+
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setAWSAccessKeyId(String AWSAccessKeyId) {
+        this.aWSAccessKeyId = AWSAccessKeyId;
+    }
+
+    public void setAWSSecretKey(String AWSSecretKey) {
+        this.aWSSecretKey = AWSSecretKey;
+    }
+
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public void setProxyPort(int proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    public String getCtime() {
+        return ctime;
+    }
+
+    public String getMaxAgeDate() {
+        return maxAgeDate;
+    }
+
+    public int getMaxThreads() {
+        return maxThreads;
+    }
+
+    public boolean isDeleteRemoved() {
+        return deleteRemoved;
+    }
+
+    public String getSourceBucket() {
+        return sourceBucket;
+    }
+
+    public int getMaxRetries() {
+        return maxRetries;
+    }
+
+    public String getDestinationBucket() {
+        return destinationBucket;
+    }
+
+    public boolean isCrossAccountCopy() {
+        return crossAccountCopy;
+    }
+
+    public long getUploadPartSize() {
+        return uploadPartSize;
+    }
+
+    public String getDestPrefix() {
+        return destPrefix;
+    }
+
+    public boolean isDryRun() {
+        return dryRun;
+    }
+
+    public String getStorageClass() {
+        return storageClass;
+    }
+
+    public boolean isEncrypt() {
+        return encrypt;
+    }
+
+    public long getMaxAge() {
+        return maxAge;
+    }
+
+    public boolean isSizeOnly() {
+        return sizeOnly;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
 }

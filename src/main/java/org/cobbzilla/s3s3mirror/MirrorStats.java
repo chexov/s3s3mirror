@@ -1,23 +1,19 @@
 package org.cobbzilla.s3s3mirror;
 
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.cobbzilla.s3s3mirror.MirrorConstants.*;
 
-@Slf4j
 public class MirrorStats {
 
-    @Getter private final Thread shutdownHook = new Thread() {
+    private final Thread shutdownHook = new Thread() {
         @Override public void run() { logStats(); }
     };
 
     private static final String BANNER = "\n--------------------------------------------------------------------\n";
     public void logStats() {
-        log.info(BANNER + "STATS BEGIN\n" + toString() + "STATS END " + BANNER);
+        System.out.println(BANNER + "STATS BEGIN\n" + toString() + "STATS END " + BANNER);
     }
 
     private long start = System.currentTimeMillis();
@@ -69,4 +65,7 @@ public class MirrorStats {
         return bytesCopied + " bytes";
     }
 
+    public Thread getShutdownHook() {
+        return shutdownHook;
+    }
 }

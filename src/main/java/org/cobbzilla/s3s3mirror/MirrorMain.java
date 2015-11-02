@@ -4,37 +4,29 @@ import com.amazonaws.ClientConfiguration;
 import com.amazonaws.Protocol;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.auth.InstanceProfileCredentialsProvider;
-import lombok.Cleanup;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.kohsuke.args4j.CmdLineParser;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
-/**
- * Provides the "main" method. Responsible for parsing options and setting up the MirrorMaster to manage the copy.
- */
-@Slf4j
 public class MirrorMain {
 
-    @Getter @Setter private String[] args;
+    private String[] args;
 
-    @Getter private final MirrorOptions options = new MirrorOptions();
+    private final MirrorOptions options = new MirrorOptions();
 
     private final CmdLineParser parser = new CmdLineParser(options);
 
     private final Thread.UncaughtExceptionHandler uncaughtExceptionHandler = new Thread.UncaughtExceptionHandler() {
         @Override public void uncaughtException(Thread t, Throwable e) {
-            log.error("Uncaught Exception (thread "+t.getName()+"): "+e, e);
+            System.err.println("Uncaught Exception (thread "+t.getName()+"): "+e);
         }
     };
 
-    @Getter private AmazonS3Client client;
-    @Getter private MirrorContext context;
-    @Getter private MirrorMaster master;
+    private AmazonS3Client client;
+    private MirrorContext context;
+    private MirrorMaster master;
 
     public MirrorMain(String[] args) { this.args = args; }
 
@@ -113,7 +105,7 @@ public class MirrorMain {
     private void loadAwsKeysFromS3Config() {
         try {
             // try to load from ~/.s3cfg
-            @Cleanup BufferedReader reader = new BufferedReader(new FileReader(System.getProperty("user.home")+File.separator+".s3cfg"));
+            BufferedReader reader = new BufferedReader(new FileReader(System.getProperty("user.home")+File.separator+".s3cfg"));
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.trim().startsWith("access_key")) {
@@ -134,7 +126,7 @@ public class MirrorMain {
     private void loadAwsKeysFromAwsConfig() {
         try {
             // try to load from ~/.aws/config
-            @Cleanup BufferedReader reader = new BufferedReader(new FileReader(
+            BufferedReader reader = new BufferedReader(new FileReader(
                     System.getProperty("user.home") + File.separator + ".aws" + File.separator + "config"));
             String line;
             boolean skipSection = true;
@@ -162,4 +154,15 @@ public class MirrorMain {
         }
     }
 
+    public AmazonS3Client getClient() {
+        return client;
+    }
+
+    public MirrorContext getContext() {
+        return context;
+    }
+
+    public MirrorOptions getOptions() {
+        return options;
+    }
 }

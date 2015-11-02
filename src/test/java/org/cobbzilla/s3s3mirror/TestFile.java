@@ -1,7 +1,6 @@
 package org.cobbzilla.s3s3mirror;
 
 import com.amazonaws.services.s3.AmazonS3Client;
-import lombok.Cleanup;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.math.RandomUtils;
 
@@ -23,7 +22,7 @@ class TestFile {
     public TestFile() throws Exception{
         file = File.createTempFile(getClass().getName(), ".tmp");
         data = MirrorTest.random(TEST_FILE_SIZE + (RandomUtils.nextInt() % 1024));
-        @Cleanup FileOutputStream out = new FileOutputStream(file);
+        FileOutputStream out = new FileOutputStream(file);
         IOUtils.copy(new ByteArrayInputStream(data.getBytes()), out);
         file.deleteOnExit();
     }

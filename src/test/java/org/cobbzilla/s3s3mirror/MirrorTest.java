@@ -3,7 +3,6 @@ package org.cobbzilla.s3s3mirror;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
 import org.junit.Test;
@@ -17,7 +16,6 @@ import static org.cobbzilla.s3s3mirror.TestFile.Copy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-@Slf4j
 public class MirrorTest {
 
     public static final String SOURCE_ENV_VAR = "S3S3_TEST_SOURCE";
@@ -41,7 +39,7 @@ public class MirrorTest {
 
     private boolean checkEnvs() {
         if (SOURCE == null || DESTINATION == null) {
-            log.warn("No "+SOURCE_ENV_VAR+" and/or no "+DEST_ENV_VAR+" found in enviroment, skipping test");
+            System.out.println("No "+SOURCE_ENV_VAR+" and/or no "+DEST_ENV_VAR+" found in enviroment, skipping test");
             return false;
         }
         return true;
@@ -54,10 +52,10 @@ public class MirrorTest {
             AmazonS3Client client = main.getClient();
             for (S3Asset asset : stuffToCleanup) {
                 try {
-                    log.info("cleanupS3Assets: deleting "+asset);
+                    System.out.println("cleanupS3Assets: deleting "+asset);
                     client.deleteObject(asset.bucket, asset.key);
                 } catch (Exception e) {
-                    log.error("Error cleaning up object: "+asset+": "+e.getMessage());
+                    System.err.println("Error cleaning up object: "+asset+": "+e.getMessage());
                 }
             }
             main = null;

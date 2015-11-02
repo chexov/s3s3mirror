@@ -5,7 +5,6 @@ import com.amazonaws.services.s3.model.AccessControlList;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import org.slf4j.Logger;
 
 public abstract class KeyJob implements Runnable {
 
@@ -20,8 +19,6 @@ public abstract class KeyJob implements Runnable {
         this.summary = summary;
         this.notifyLock = notifyLock;
     }
-
-    public abstract Logger getLog();
 
     @Override public String toString() { return summary.getKey(); }
 
@@ -39,10 +36,10 @@ public abstract class KeyJob implements Runnable {
                 ex = e;
                 if (options.isVerbose()) {
                     if (tries >= options.getMaxRetries()) {
-                        getLog().error("getObjectMetadata(" + key + ") failed (try #" + tries + "), giving up");
+                        System.err.println("getObjectMetadata(" + key + ") failed (try #" + tries + "), giving up");
                         break;
                     } else {
-                        getLog().warn("getObjectMetadata("+key+") failed (try #"+tries+"), retrying...");
+                        System.out.println("getObjectMetadata("+key+") failed (try #"+tries+"), retrying...");
                     }
                 }
             }
@@ -61,10 +58,11 @@ public abstract class KeyJob implements Runnable {
                 ex = e;
                 if (options.isVerbose()) {
                     if (tries >= options.getMaxRetries()) {
-                        getLog().error("getObjectAcl(" + key + ") failed (try #" + tries + "), giving up");
+                        e.printStackTrace();
+                        System.err.println("getObjectAcl(" + key + ") failed (try #" + tries + "), giving up");
                         break;
                     } else {
-                        getLog().warn("getObjectAcl("+key+") failed (try #"+tries+"), retrying...");
+                        System.out.println("getObjectAcl("+key+") failed (try #"+tries+"), retrying...");
                     }
                 }
             }

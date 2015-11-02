@@ -5,13 +5,11 @@ import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Slf4j
 public class KeyLister implements Runnable {
 
     private AmazonS3Client client;
@@ -39,7 +37,7 @@ public class KeyLister implements Runnable {
             final List<S3ObjectSummary> objectSummaries = listing.getObjectSummaries();
             summaries.addAll(objectSummaries);
             context.getStats().objectsRead.addAndGet(objectSummaries.size());
-            if (options.isVerbose()) log.info("added initial set of "+objectSummaries.size()+" keys");
+            if (options.isVerbose()) System.out.println("added initial set of "+objectSummaries.size()+" keys");
         }
     }
 
@@ -48,7 +46,7 @@ public class KeyLister implements Runnable {
         final MirrorOptions options = context.getOptions();
         final boolean verbose = options.isVerbose();
         int counter = 0;
-        log.info("starting...");
+        System.out.println("starting...");
         try {
             while (true) {
                 while (getSize() < maxQueueCapacity) {
@@ -59,26 +57,27 @@ public class KeyLister implements Runnable {
                             final List<S3ObjectSummary> objectSummaries = listing.getObjectSummaries();
                             summaries.addAll(objectSummaries);
                             context.getStats().objectsRead.addAndGet(objectSummaries.size());
-                            if (verbose) log.info("queued next set of "+objectSummaries.size()+" keys (total now="+getSize()+")");
+                            if (verbose) System.out.println("queued next set of "+objectSummaries.size()+" keys (total now="+getSize()+")");
                         }
 
                     } else {
-                        log.info("No more keys found in source bucket, exiting");
+                        System.out.println("No more keys found in source bucket, exiting");
                         return;
                     }
                 }
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
-                    log.error("interrupted!");
+                    e.printStackTrace();
                     return;
                 }
             }
         } catch (Exception e) {
-            log.error("Error in run loop, KeyLister thread now exiting: "+e);
+            e.printStackTrace();
+            System.err.println("Error in run loop, KeyLister thread now exiting: "+e);
 
         } finally {
-            if (verbose) log.info("KeyLister run loop finished");
+            if (verbose) System.out.println("KeyLister run loop finished");
             done.set(true);
         }
     }
@@ -94,14 +93,14 @@ public class KeyLister implements Runnable {
             try {
                 context.getStats().s3getCount.incrementAndGet();
                 ObjectListing listing = client.listObjects(request);
-                if (verbose) log.info("successfully got first batch of objects (on try #"+tries+")");
+                if (verbose) System.out.println("successfully got first batch of objects (on try #"+tries+")");
                 return listing;
 
             } catch (Exception e) {
                 lastException = e;
-                log.warn("s3getFirstBatch: error listing (try #"+tries+"): "+e);
+                System.out.println("s3getFirstBatch: error listing (try #"+tries+"): "+e);
                 if (Sleep.sleep(50)) {
-                    log.info("s3getFirstBatch: interrupted while waiting for next try");
+                    System.out.println("s3getFirstBatch: interrupted while waiting for next try");
                     break;
                 }
             }
@@ -118,17 +117,19 @@ public class KeyLister implements Runnable {
             try {
                 context.getStats().s3getCount.incrementAndGet();
                 ObjectListing next = client.listNextBatchOfObjects(listing);
-                if (verbose) log.info("successfully got next batch of objects (on try #"+tries+")");
+                if (verbose) System.out.println("successfully got next batch of objects (on try #"+tries+")");
                 return next;
 
             } catch (AmazonS3Exception s3e) {
-                log.error("s3 exception listing objects (try #"+tries+"): "+s3e);
+                s3e.printStackTrace();
+                System.err.println("s3 exception listing objects (try #"+tries+"): "+s3e);
 
             } catch (Exception e) {
-                log.error("unexpected exception listing objects (try #"+tries+"): "+e);
+                e.printStackTrace();
+                System.err.println("unexpected exception listing objects (try #"+tries+"): ");
             }
             if (Sleep.sleep(50)) {
-                log.info("s3getNextBatch: interrupted while waiting for next try");
+                System.out.println("s3getNextBatch: interrupted while waiting for next try");
                 break;
             }
         }
