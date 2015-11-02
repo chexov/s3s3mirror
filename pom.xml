@@ -22,18 +22,11 @@
         </license>
     </licenses>
 
-    <properties>
-        <org.slf4j.version>1.6.4</org.slf4j.version>
-        <junit.version>4.8</junit.version>
-    </properties>
-
     <dependencies>
-        <!-- Testing -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
+            <version>4.12</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -52,14 +45,7 @@
         <dependency>
             <groupId>args4j</groupId>
             <artifactId>args4j</artifactId>
-            <version>2.0.23</version>
-        </dependency>
-
-        <!-- for ctime argument -->
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>2.3</version>
+            <version>2.0.26</version>
         </dependency>
 
         <!-- Amazon SDK -->
